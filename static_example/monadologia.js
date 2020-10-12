@@ -10377,10 +10377,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var maybe = function (v) {
     return {
         isNothing: function () {
-            return v === null || typeof v === 'undefined';
+            return this.value === null || typeof this.value === 'undefined';
         },
         map: function (f) {
-            return this.isNothing() ? maybe.nothing() : maybe(f(v));
+            return this.isNothing() ? maybe.nothing() : maybe(f(this.value));
         },
         flatten: function () {
             return this.value;

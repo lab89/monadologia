@@ -3,10 +3,10 @@ import { Maybe, MaybeFactory } from "../../index";
 const maybe = <MaybeFactory>function(v: any): Maybe{
     return{
         isNothing : function(){
-            return v === null || typeof v === 'undefined'
+            return this.value === null || typeof this.value === 'undefined'
         },
         map : function(f: (...args: any[]) => any){
-            return this.isNothing() ? maybe.nothing() : maybe(f(v));
+            return this.isNothing() ? maybe.nothing() : maybe(f(this.value));
         },
         flatten : function(){
             return this.value;
