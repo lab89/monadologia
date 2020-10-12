@@ -10293,7 +10293,122 @@ var pipe_1 = __webpack_require__(/*! ./util/pipe */ "./src/util/pipe.ts");
 var curry_1 = __webpack_require__(/*! ./util/curry */ "./src/util/curry.ts");
 var go_1 = __webpack_require__(/*! ./util/go */ "./src/util/go.ts");
 var compose_1 = __webpack_require__(/*! ./util/compose */ "./src/util/compose.ts");
-exports.default = { pipe: pipe_1.default, curry: curry_1.default, go: go_1.default, compose: compose_1.default };
+var Maybe_1 = __webpack_require__(/*! ./monad/Maybe */ "./src/monad/Maybe.ts");
+var Either_1 = __webpack_require__(/*! ./monad/Either */ "./src/monad/Either.ts");
+exports.default = { pipe: pipe_1.default, curry: curry_1.default, go: go_1.default, compose: compose_1.default, maybe: Maybe_1.default, either: Either_1.default };
+
+
+/***/ }),
+
+/***/ "./src/monad/Either.ts":
+/*!*****************************!*\
+  !*** ./src/monad/Either.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function right(v) {
+    return {
+        map: function (f) {
+            return right(f(this.value));
+        },
+        flatten: function () {
+            return this.value;
+        },
+        chain: function (f) {
+            return this.map(f).flatten();
+        },
+        catch: function (f) {
+            return right(this.value);
+        },
+        value: v
+    };
+}
+function left(v) {
+    return {
+        map: function (f) {
+            return left(this.value);
+        },
+        flatten: function () {
+            return this.value;
+        },
+        chain: function (f) {
+            return this.value;
+        },
+        catch: function (f) {
+            return right(f(this.value));
+        },
+        value: v
+    };
+}
+function tryCatch(f) {
+    return function (v) {
+        try {
+            return right(f(v));
+        }
+        catch (error) {
+            return left(error);
+        }
+    };
+}
+var either = {
+    right: right,
+    left: left,
+    tryCatch: tryCatch
+};
+exports.default = either;
+
+
+/***/ }),
+
+/***/ "./src/monad/Maybe.ts":
+/*!****************************!*\
+  !*** ./src/monad/Maybe.ts ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var maybe = function (v) {
+    return {
+        isNothing: function () {
+            return v === null || typeof v === 'undefined';
+        },
+        map: function (f) {
+            return this.isNothing() ? maybe.nothing() : maybe(f(v));
+        },
+        flatten: function () {
+            return this.value;
+        },
+        chain: function (f) {
+            return this.map(f).flatten();
+        },
+        value: v
+    };
+};
+maybe.nothing = function () {
+    return {
+        isNothing: function () {
+            return true;
+        },
+        map: function () {
+            return maybe.nothing();
+        },
+        flatten: function () {
+            return maybe.nothing();
+        },
+        chain: function () {
+            return maybe.nothing();
+        },
+        value: null
+    };
+};
+exports.default = maybe;
 
 
 /***/ }),
@@ -10362,7 +10477,7 @@ var curry = function (fn, length) {
             for (var _i = 0; _i < arguments.length; _i++) {
                 nextArgs[_i] = arguments[_i];
             }
-            return fn.apply(void 0, __spreadArrays(args, [nextArgs]));
+            return fn.apply(void 0, __spreadArrays(args, nextArgs));
         }, fn.length - args.length);
     };
 };
