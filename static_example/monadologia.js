@@ -10312,6 +10312,7 @@ exports.default = { pipe: pipe_1.default, curry: curry_1.default, go: go_1.defau
 Object.defineProperty(exports, "__esModule", { value: true });
 function right(v) {
     return {
+        constructor: right,
         map: function (f) {
             return right(f(this.value));
         },
@@ -10329,6 +10330,7 @@ function right(v) {
 }
 function left(v) {
     return {
+        constructor: left,
         map: function (f) {
             return left(this.value);
         },
@@ -10345,9 +10347,9 @@ function left(v) {
     };
 }
 function tryCatch(f) {
-    return function (v) {
+    return function (b) {
         try {
-            return right(f(v));
+            return right(f(b));
         }
         catch (error) {
             return left(error);
@@ -10400,7 +10402,7 @@ maybe.nothing = function () {
             return maybe.nothing();
         },
         flatten: function () {
-            return maybe.nothing();
+            return this.value;
         },
         chain: function () {
             return maybe.nothing();

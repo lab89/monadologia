@@ -1,45 +1,47 @@
 import { Either, EitherFactory } from "../..";
-function right(v: any): Either {
+function right<T>(v: T): Either<T> {
     return {
-        map : function(f: Function){
-            return right(f(this.value))
+        constructor : right,
+        map : function<S>(f: (v: T)=> any){
+            return right<S>(f(this.value))
         },
-        flatten : function(){
+        flatten : function(): T{
             return this.value;
         },
-        chain : function(f: Function){
+        chain : function<S>(f: (v: T) => S){
             return this.map(f).flatten();
         },
-        catch : function(f: Function){
-            return right(this.value)
+        catch : function(f: (v: any) => any){
+            return right<ReturnType<typeof f>>(this.value)
         },
         value : v
     }
 }
-function left(v: any): Either {
+function left<T>(v: T): Either<T> {
     return {
-        map : function(f: Function){
-            return left(this.value)
+        constructor : left,
+        map : function(f: (v: T)=> any){
+            return left<ReturnType<typeof f>>(this.value)
         },
-        flatten : function(){
+        flatten : function(): T{
             return this.value;
         },
-        chain : function(f: Function){
+        chain : function<S>(f: (v: T) => S){
             return this.value;
         },
-        catch : function(f: Function){
-            return right(f(this.value))
+        catch : function(f: (v: any) => any){
+            return right<ReturnType<typeof f>>(f(this.value))
         },
         value : v
     }
 }
 
-function tryCatch(f: Function): Function {
-    return function (v: any): Either {
-        try{
-            return right(f(v));
+function tryCatch<S>(f: (v: any) => S): (v: any)=> Either<S> {
+    return function(b: any): Either<ReturnType<typeof f>> {
+        try{            
+            return right<S>(f(b));
         }catch(error){
-            return left(error)
+            return left<S>(error)
         }
     }
 }

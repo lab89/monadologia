@@ -1,35 +1,35 @@
 import { Maybe, MaybeFactory } from "../../index";
 
-const maybe = <MaybeFactory>function(v: any): Maybe{
+const maybe: MaybeFactory = <MaybeFactory>function<T>(v: T): Maybe<T>{
     return{
         isNothing : function(){
             return this.value === null || typeof this.value === 'undefined'
         },
-        map : function(f: (...args: any[]) => any){
-            return this.isNothing() ? maybe.nothing() : maybe(f(this.value));
+        map : function(f: (v: T)=> any){
+            return this.isNothing() ? maybe.nothing<null>() : maybe<ReturnType<typeof f>>(f(this.value));
         },
-        flatten : function(){
+        flatten : function(): T{
             return this.value;
         },
-        chain : function(f: Function){
+        chain : function(f: (v: T) => Maybe<any>){
             return this.map(f).flatten();
         },
         value: v
     }    
 }
-maybe.nothing = function(): Maybe{
+maybe.nothing = function<T>(): Maybe<T>{
     return{
         isNothing : function(){
             return true;
         },
         map : function(){
-            return maybe.nothing();
+            return maybe.nothing<T>();
         },
         flatten : function(){
-            return maybe.nothing();
+            return this.value;
         },
         chain : function(){
-            return maybe.nothing();
+            return maybe.nothing<T>();
         },
         value: null
     }

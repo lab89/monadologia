@@ -1,4 +1,5 @@
 import * as monadologia from 'monadologia'
+import { MaybeFactory } from 'monadologia';
 
 
 function a(v: any){
@@ -31,17 +32,27 @@ console.log(composed(2));
 console.log(monadologia)
 console.log()
 
-const result = monadologia.maybe(4)
-            .map((v)=> v * 4)
-            .map((v)=> v + 2)
-            .map((v)=> v + 5)
+const result = monadologia.maybe<number>(4)
+            .map((v: number)=> v * 4)
+            .map((v: number)=> v + 2)
+            .map((v: number)=> v + 5)
             .flatten(); //23
-const promise = () => new Promise((resolve, reject)=>{
-    setTimeout(()=> resolve(1),1000)
-})
-const result2 = monadologia.maybe(4)
-.map((v)=> v * 4)
-.map(async (v)=> null)
-.map((v)=> v + 5)
+
+const result2 = monadologia.maybe<number>(4)
+.map((v: number)=> v * 2)
+.chain((v: number)=>  (monadologia.maybe as MaybeFactory).nothing())
+.map((v: number)=> v + 1)
+.map((v: number)=> v + 1)
 .flatten(); //16
 console.log(result2);
+
+function callback(v: string): string {
+    if(v === "error") 
+        throw new Error("v")
+    return v;
+}
+const testFunc = monadologia.either.tryCatch<ReturnType<typeof callback>>(callback)
+
+console.log(testFunc("test")) // right
+console.log(testFunc("error")) // left
+
