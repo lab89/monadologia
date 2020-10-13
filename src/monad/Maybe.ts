@@ -6,7 +6,7 @@ const maybe: MaybeFactory = <MaybeFactory>function<T>(v: T): Maybe<T>{
             return this.value === null || typeof this.value === 'undefined'
         },
         map : function<S>(f: (v: T)=> S){
-            return this.isNothing() ? maybe.nothing<null>() : maybe<ReturnType<typeof f>>(f(this.value));
+            return this.isNothing() ? maybe.nothing<null>() : maybe<S>(f(this.value));
         },
         flatten : function(): T{
             return this.value;

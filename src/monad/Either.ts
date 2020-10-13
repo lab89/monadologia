@@ -11,7 +11,7 @@ function right<T>(v: T): Either<T> {
         chain : function<S>(f: (v: T) => S){
             return this.map(f).flatten();
         },
-        catch : function(f: (v: any) => any){
+        catch : function<S>(f: (v: any) => S){
             return right<T>(this.value)
         },
         value : v
@@ -21,7 +21,7 @@ function left<T>(v: T): Either<T> {
     return {
         constructor : left,
         map : function<S>(f: (v: T)=> S){
-            return left<ReturnType<typeof f>>(this.value)
+            return left<S>(this.value)
         },
         flatten : function(): T{
             return this.value;
@@ -29,19 +29,19 @@ function left<T>(v: T): Either<T> {
         chain : function<S>(f: (v: T) => S){
             return this.value;
         },
-        catch : function(f: (v: any) => any){
-            return right<ReturnType<typeof f>>(f(this.value))
+        catch : function<S>(f: (v: any) => S){
+            return right<S>(f(this.value))
         },
         value : v
     }
 }
 
-function tryCatch<T>(f: (v: any) => T): (v: any)=> Either<ReturnType<typeof f>> {
-    return function(b: any): Either<ReturnType<typeof f>> {
+function tryCatch<T>(f: (v: any) => T): (v: any)=> Either<T>{
+    return function(b: any): Either<T>{
         try{            
-            return right<ReturnType<typeof f>>(f(b));
+            return right<T>(f(b));
         }catch(error){
-            return left<ReturnType<typeof f>>(error)
+            return left<T>(error.message)
         }
     }
 }

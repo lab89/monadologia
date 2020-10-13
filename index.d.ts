@@ -7,7 +7,7 @@ interface MaybeFactory {
 
 interface Maybe<T> {
     isNothing(): boolean; 
-    map<S>(f: (v: T)=> S): Maybe<ReturnType<typeof f>>; //M a -> (a -> b) -> M b
+    map<S>(f: (v: T)=> S): Maybe<S>; //M a -> (a -> b) -> M b
     flatten(): T | Maybe<T>; // M a -> a 
     chain<S>(f: (v: any) => Maybe<S>): Maybe<S>; // M a -> (a -> M b) -> M b
     value: T;
@@ -15,7 +15,7 @@ interface Maybe<T> {
 
 interface Either<T> {
     constructor<T>(v: T): Either<T>
-    map<S>(f: (v: T) => S): Either<ReturnType<typeof f>>; //M a -> (a -> b) -> M b
+    map<S>(f: (v: T) => S): Either<S>; //M a -> (a -> b) -> M b
     flatten(): T; // M a -> a 
     chain<S>(f: (v: any) => Either<S>): Either<S>; // M a -> (a -> M b) -> M b
     value: T;
@@ -25,7 +25,7 @@ interface Either<T> {
 interface EitherFactory {
     right<T>(v: T): Either<T>;
     left<T>(v: T): Either<T>;
-    tryCatch<T>(f: (v: any) => T): (v: any)=> Either<ReturnType<typeof f>>; // (()=>a) => M a
+    tryCatch<T>(f: (v: any) => T): (v: any)=> Either<T>; // (()=>a) => M a
 }
 
 interface Task {

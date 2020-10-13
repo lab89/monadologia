@@ -10352,7 +10352,7 @@ function tryCatch(f) {
             return right(f(b));
         }
         catch (error) {
-            return left(error);
+            return left(error.message);
         }
     };
 }

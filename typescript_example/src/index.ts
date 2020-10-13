@@ -57,7 +57,7 @@ console.log(result2) // nothing
 
 function callback(v: string): string {
     if(v === "error") 
-        throw new Error("v")
+        throw new Error("error")
     return v;
 }
 
@@ -71,6 +71,6 @@ const afterRes =res.catch((d: string) => d)
 .map((v: number) => "")
 .map((v: string) => [])
 .map((v: any[]) => {})
-.chain((v: any) => monadologia.either.left("error"))
+.chain((v: any) => testFunc("error").catch((m: string)=> m))
 console.log(afterRes.constructor.name) // left
 
