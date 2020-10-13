@@ -10402,7 +10402,7 @@ maybe.nothing = function () {
             return maybe.nothing();
         },
         flatten: function () {
-            return this.value;
+            return maybe.nothing();
         },
         chain: function () {
             return maybe.nothing();

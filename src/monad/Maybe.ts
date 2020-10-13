@@ -5,13 +5,13 @@ const maybe: MaybeFactory = <MaybeFactory>function<T>(v: T): Maybe<T>{
         isNothing : function(){
             return this.value === null || typeof this.value === 'undefined'
         },
-        map : function(f: (v: T)=> any){
+        map : function<S>(f: (v: T)=> S){
             return this.isNothing() ? maybe.nothing<null>() : maybe<ReturnType<typeof f>>(f(this.value));
         },
         flatten : function(): T{
             return this.value;
         },
-        chain : function(f: (v: T) => Maybe<any>){
+        chain : function<S>(f: (v: T) => Maybe<S>): Maybe<S>{
             return this.map(f).flatten();
         },
         value: v
@@ -22,13 +22,13 @@ maybe.nothing = function<T>(): Maybe<T>{
         isNothing : function(){
             return true;
         },
-        map : function(){
+        map : function<T>(){
             return maybe.nothing<T>();
         },
         flatten : function(){
-            return this.value;
+            return maybe.nothing<T>();
         },
-        chain : function(){
+        chain : function<T>(){
             return maybe.nothing<T>();
         },
         value: null

@@ -1,17 +1,17 @@
 import * as monadologia from 'monadologia'
-import { MaybeFactory } from 'monadologia';
+import { Maybe, MaybeFactory } from 'monadologia';
 
 
 function a(v: any){
-    console.log("a")
+    console.log("call a func")
     return v;
 }
 function b(v: any){
-    console.log("b")
+    console.log("call b func")
     return v * v
 }
 function c(v: any){
-    console.log("c")
+    console.log("call c func")
     return v * v
 }
 
@@ -19,18 +19,17 @@ const p = monadologia.pipe(a, b, c)(2)
 console.log("PIPE : " + p)
 
 const curried = monadologia.curry(function(a: any, b: any, c: any){
-    console.log(a, b, c)
+    console.log("CURRIED : " +  a, b, c)
 })
 curried(1)(2)(3)
 curried(1, 2)(3)
 curried(1)(2, 3)
 
 const composed = monadologia.compose(a, b, c)
-console.log(composed(2));
+console.log("COMPOSED : " + composed(2));
 
 
-console.log(monadologia)
-console.log()
+console.log("MONADOLOGIA : "+ monadologia)
 
 const result = monadologia.maybe<number>(4)
             .map((v: number)=> v * 4)
@@ -38,21 +37,40 @@ const result = monadologia.maybe<number>(4)
             .map((v: number)=> v + 5)
             .flatten(); //23
 
-const result2 = monadologia.maybe<number>(4)
-.map((v: number)=> v * 2)
-.chain((v: number)=>  (monadologia.maybe as MaybeFactory).nothing())
-.map((v: number)=> v + 1)
-.map((v: number)=> v + 1)
-.flatten(); //16
-console.log(result2);
+const result2 = 
+monadologia.maybe<number>(4)
+.map((v: number): number => v * 2)
+.map((v: number)=> "20") 
+.map((v: string)=> ({}) )
+.map((v: {})=> [])
+.map((v: any[])=> 100)
+.map((v: number) => null as null)
+.chain((v: number)=> monadologia.maybe<string>(""))
+.chain((v: number)=> monadologia.maybe<string>(""))
+console.log(result2) // nothing
+
+
+
+
+
+
 
 function callback(v: string): string {
     if(v === "error") 
         throw new Error("v")
     return v;
 }
-const testFunc = monadologia.either.tryCatch<ReturnType<typeof callback>>(callback)
 
-console.log(testFunc("test")) // right
-console.log(testFunc("error")) // left
+const testFunc = monadologia.either.tryCatch<string>(callback)
+
+const res = testFunc("test")
+console.log(res.constructor.name) // right
+
+const afterRes =res.catch((d: string) => d)
+.map((v: string) => 10)
+.map((v: number) => "")
+.map((v: string) => [])
+.map((v: any[]) => {})
+.chain((v: any) => monadologia.either.left("error"))
+console.log(afterRes.constructor.name) // left
 

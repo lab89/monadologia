@@ -1,31 +1,31 @@
 export as namespace monadologia;
-
+export type G<T> = (value: T) => T;
 interface MaybeFactory {
-    <T>(v: T): Maybe<T>;
+    <T>(v: any): Maybe<T>;
     nothing<T>(): Maybe<T>;
 }
 
 interface Maybe<T> {
     isNothing(): boolean; 
-    map(f: (v: T)=> any): Maybe<ReturnType<typeof f>>; //M a -> (a -> b) -> M b
-    flatten(): T; // M a -> a 
-    chain(f: (v: T) => Maybe<any>): Maybe<ReturnType<typeof f>> | Maybe<any>; // M a -> (a -> M b) -> M b
+    map<S>(f: (v: T)=> S): Maybe<ReturnType<typeof f>>; //M a -> (a -> b) -> M b
+    flatten(): T | Maybe<T>; // M a -> a 
+    chain<S>(f: (v: any) => Maybe<S>): Maybe<S>; // M a -> (a -> M b) -> M b
     value: T;
 }
 
 interface Either<T> {
     constructor<T>(v: T): Either<T>
-    map<S>(f: (v: T) => S): Either<S>; //M a -> (a -> b) -> M b
+    map<S>(f: (v: T) => S): Either<ReturnType<typeof f>>; //M a -> (a -> b) -> M b
     flatten(): T; // M a -> a 
-    chain<S>(f: (v: any) => S): S; // M a -> (a -> M b) -> M b
+    chain<S>(f: (v: any) => Either<S>): Either<S>; // M a -> (a -> M b) -> M b
     value: T;
-    catch(f: (v: any) => any): Either<ReturnType<typeof f>>
+    catch<S>(f: (v: any) => S): Either<S> | Either<T>
 }
 
 interface EitherFactory {
     right<T>(v: T): Either<T>;
     left<T>(v: T): Either<T>;
-    tryCatch<T>(f: (v: T) => any): (v: any)=> Either<ReturnType<typeof f>>; // (()=>a) => M a
+    tryCatch<T>(f: (v: any) => T): (v: any)=> Either<ReturnType<typeof f>>; // (()=>a) => M a
 }
 
 interface Task {
