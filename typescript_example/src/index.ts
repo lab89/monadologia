@@ -29,7 +29,7 @@ const composed = monadologia.compose(a, b, c)
 console.log("COMPOSED : " + composed(2));
 
 
-console.log("MONADOLOGIA : "+ monadologia)
+console.log("MONADOLOGIA : ",  monadologia)
 
 const result = monadologia.maybe<number>(4)
             .map((v: number)=> v * 4)
@@ -47,8 +47,8 @@ monadologia.maybe<number>(4)
 .map((v: number) => null as null)
 .chain((v: number)=> monadologia.maybe<string>(""))
 .chain((v: number)=> monadologia.maybe<string>(""))
-console.log(result2) // nothing
 
+console.log(result2) // nothing
 
 
 
@@ -69,8 +69,12 @@ console.log(res.constructor.name) // right
 const afterRes =res.catch((d: string) => d)
 .map((v: string) => 10)
 .map((v: number) => "")
-.map((v: string) => [])
-.map((v: any[]) => {})
 .chain((v: any) => testFunc("error").catch((m: string)=> m))
 console.log(afterRes.constructor.name) // left
 
+
+const s = monadologia.state<string, number>(function(state: any){
+    return {value: "", state: 100}
+}).map((v: string)=> 100)
+
+console.log(s);

@@ -10295,7 +10295,8 @@ var go_1 = __webpack_require__(/*! ./util/go */ "./src/util/go.ts");
 var compose_1 = __webpack_require__(/*! ./util/compose */ "./src/util/compose.ts");
 var Maybe_1 = __webpack_require__(/*! ./monad/Maybe */ "./src/monad/Maybe.ts");
 var Either_1 = __webpack_require__(/*! ./monad/Either */ "./src/monad/Either.ts");
-exports.default = { pipe: pipe_1.default, curry: curry_1.default, go: go_1.default, compose: compose_1.default, maybe: Maybe_1.default, either: Either_1.default };
+var State_1 = __webpack_require__(/*! ./monad/State */ "./src/monad/State.ts");
+exports.default = { pipe: pipe_1.default, curry: curry_1.default, go: go_1.default, compose: compose_1.default, maybe: Maybe_1.default, either: Either_1.default, state: State_1.default };
 
 
 /***/ }),
@@ -10411,6 +10412,39 @@ maybe.nothing = function () {
     };
 };
 exports.default = maybe;
+
+
+/***/ }),
+
+/***/ "./src/monad/State.ts":
+/*!****************************!*\
+  !*** ./src/monad/State.ts ***!
+  \****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var state = function (rf) {
+    return {
+        runState: rf,
+        map: function (f) {
+            return state(function (state) {
+                var prev = this.runState(state);
+                return { value: f(prev.value), state: prev.state };
+            });
+        },
+        flatten: function () {
+            return state(function (state) {
+                var prev = this.runState(state);
+                var i = prev.value.runState(prev.state);
+                return i;
+            });
+        }
+    };
+};
+exports.default = state;
 
 
 /***/ }),

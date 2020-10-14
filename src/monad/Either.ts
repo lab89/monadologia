@@ -3,7 +3,7 @@ function right<T>(v: T): Either<T> {
     return {
         constructor : right,
         map : function<S>(f: (v: T)=> S){
-            return right<ReturnType<typeof f>>(f(this.value))
+            return right<S>(f(this.value))
         },
         flatten : function(): T{
             return this.value;
@@ -40,7 +40,7 @@ function tryCatch<T>(f: (v: any) => T): (v: any)=> Either<T>{
     return function(b: any): Either<T>{
         try{            
             return right<T>(f(b));
-        }catch(error){
+        }catch(error){            
             return left<T>(error.message)
         }
     }
