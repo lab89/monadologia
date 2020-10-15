@@ -13,6 +13,10 @@ const writerGen = function<T>(v: T, log: any[]): Writer<T>{
         chain: function<Q>(f:(value: T)=> Writer<Q>){
             const res = this.map(f).flatten();
             return writerGen(res.value, this.log.concat(res.log));
+        },
+        logging: function<Q>(f: (value: T)=> Q){
+            const newlog = f(v);
+            return writerGen(v, this.log.concat([newlog]))
         }
     }
 }
@@ -22,8 +26,7 @@ const writer: WriterFactory = <WriterFactory>function<T>(v: T, l?: any[]){
         return writerGen(v, l)
     }else{
         return writerGen(v, [])
-    }
-    
+    }    
 }
 
 

@@ -10510,13 +10510,15 @@ var writerGen = function (v, log) {
             return writerGen(f(v), this.log);
         },
         flatten: function () {
-            console.log(this.value);
             return writerGen(this.value.value, this.value.log);
         },
         chain: function (f) {
             var res = this.map(f).flatten();
-            console.log(res);
             return writerGen(res.value, this.log.concat(res.log));
+        },
+        logging: function (f) {
+            var newlog = f(v);
+            return writerGen(v, this.log.concat([newlog]));
         }
     };
 };

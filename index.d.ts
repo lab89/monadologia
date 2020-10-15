@@ -58,6 +58,8 @@ interface Writer<T>{
     map<Q>(f: (value: T)=> Q): Writer<Q> // M<T, any[]> -> M<Q, any[]>
     flatten<P>(): Writer<P> | P, // M<T, any[]> -> T  or M<M<P, any[]>, any[]> -> M<P, any[] + any[]>
     chain<P>(f: (value: T)=> Writer<P>): Writer<P> // M<T, any[]> -> (T -> M<P, any[]>) -> M<P, any[] + any[]>    
+    logging<Q>(f: (value: T) => Q): Writer<T>
+
 }
 interface WriterFactory{
     <T>(v: T) : Writer<T>

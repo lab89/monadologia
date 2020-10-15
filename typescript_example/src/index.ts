@@ -76,19 +76,20 @@ console.log(afterRes.constructor.name) // left
 console.log(monadologia.state)
 const s = monadologia.state(3)
 .chain((v: number)=> monadologia.state.put([]))
-.chain((value: number)=> monadologia.state.gets((state: any)=> {
-    console.log("STATE : ", state)
+.chain((value: number)=> monadologia.state.gets((state: any)=> {   
+    console.log("STATE : " , state); 
     return state + "hello"
 }))
-.evalValue("test")
+.evalState("test")
 
 console.log(s);
 
 
 const w = monadologia.writer(4)
 .map((v: number)=> "hello!")
+.logging((v: string)=> "Inputed: " + v)
 .chain((v: string)=> monadologia.writer(v, ["inputed: " + v]))
 .map((v: string)=> "Yaho@")
-.chain((v: string)=> monadologia.writer(v, ["screamed: " + v]))
+.logging((v: string)=> "YAHO~~!")
 console.log(w)
 
