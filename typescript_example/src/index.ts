@@ -74,7 +74,9 @@ const afterRes =res.catch((d: string) => d)
 console.log(afterRes.constructor.name) // left
 
 console.log(monadologia.state)
-const s = monadologia.state(3).chain((value: number)=> monadologia.state.gets((state: any)=> {
+const s = monadologia.state(3)
+.chain((v: number)=> monadologia.state.put([]))
+.chain((value: number)=> monadologia.state.gets((state: any)=> {
     console.log("STATE : ", state)
     return state + "hello"
 }))
@@ -83,17 +85,10 @@ const s = monadologia.state(3).chain((value: number)=> monadologia.state.gets((s
 console.log(s);
 
 
-/**
-.map((v: string)=> 200) // S<200, 100>
-.chain((v: number)=>{
-    return monadologia.state<number, any[]>(function(state: any){
-        return {value: v+ 10, state : state}
-    })
-}) // S<210, []>
+const w = monadologia.writer(4)
+.map((v: number)=> "hello!")
+.chain((v: string)=> monadologia.writer(v, ["inputed: " + v]))
+.map((v: string)=> "Yaho@")
+.chain((v: string)=> monadologia.writer(v, ["screamed: " + v]))
+console.log(w)
 
-.put(100) // S<undefined, 100>
-.get() // S<100, 100>
-.modify((v: number)=> []) // S<undefined, any[]>
-.gets((state: any[]) => "") // S<string, number>
-.evalValue(1) // string
- */

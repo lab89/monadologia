@@ -57,9 +57,12 @@ interface Writer<T>{
     log: any[], // any[]
     map<Q>(f: (value: T)=> Q): Writer<Q> // M<T, any[]> -> M<Q, any[]>
     flatten<P>(): Writer<P> | P, // M<T, any[]> -> T  or M<M<P, any[]>, any[]> -> M<P, any[] + any[]>
-    chain<P>(f: (value: T)=> Writer<P>): Writer<P> // M<T, any[]> -> (T -> M<P, any[]>) -> M<P, any[] + any[]>
+    chain<P>(f: (value: T)=> Writer<P>): Writer<P> // M<T, any[]> -> (T -> M<P, any[]>) -> M<P, any[] + any[]>    
 }
-
+interface WriterFactory{
+    <T>(v: T) : Writer<T>
+    <T>(v: T, l : any[]): Writer<T>
+}
 interface Reader<T>{
     runReader: <P>(env: P)=> T;
     map<Q>(f: (value: T)=> Q): Reader<Q>;
@@ -70,6 +73,7 @@ interface ReaderFactory{
     <T>(f: <P>(v: P)=> T): Reader<T>
     ask<T>(): Reader<T>;
 }
+
 export function pipe(...fns: Array<Function>): Function;
 export function go(init: any, ...fns: Array<Function>): any;
 export function curry(...fns: Array<Function>): Function;
@@ -77,3 +81,4 @@ export function compose(...fns: Array<Function>): Function;
 export const maybe : MaybeFactory;
 export const either: EitherFactory;
 export const state: StateFactory;    
+export const writer: WriterFactory;

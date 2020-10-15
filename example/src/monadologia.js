@@ -10296,7 +10296,8 @@ var compose_1 = __webpack_require__(/*! ./util/compose */ "./src/util/compose.ts
 var Maybe_1 = __webpack_require__(/*! ./monad/Maybe */ "./src/monad/Maybe.ts");
 var Either_1 = __webpack_require__(/*! ./monad/Either */ "./src/monad/Either.ts");
 var State_1 = __webpack_require__(/*! ./monad/State */ "./src/monad/State.ts");
-exports.default = { pipe: pipe_1.default, curry: curry_1.default, go: go_1.default, compose: compose_1.default, maybe: Maybe_1.default, either: Either_1.default, state: State_1.default };
+var Writer_1 = __webpack_require__(/*! ./monad/Writer */ "./src/monad/Writer.ts");
+exports.default = { pipe: pipe_1.default, curry: curry_1.default, go: go_1.default, compose: compose_1.default, maybe: Maybe_1.default, either: Either_1.default, state: State_1.default, writer: Writer_1.default };
 
 
 /***/ }),
@@ -10486,71 +10487,48 @@ state.get = function () {
             });
         });
     };
-/**
-const state2: StateFactory = <StateFactory>function<T, S>(rf: <P>(state: P)=> {value: T, state: S}): State<T, S>{
-    return {
-        runState : rf,
-        map : function<Q>(f: (value: T)=> Q): State<Q, S>{
-            const runState = this.runState;
-            return state<Q, S>(function<S>(state: S){
-                const prev = runState(state);
-                return {value: f(prev.value), state: prev.state}
-            })
-        },
-        flatten : function<P, Q>(){
-            const runState = this.runState;
-            return state<P, Q>(function<S>(state: S){
-                const prev = runState(state);
-                const i = prev.value.runState(prev.state); //? ?
-                return i;
-            })
-        },
-        chain : function<P, Q>(f: (value: T)=> State<P, Q>){
-            return this.map(f).flatten();
-        },
-        evalState : function(initState: any){
-            const result = this.runState(initState);
-            return result.state;
-        },
-        evalValue : function(initState: any){
-            const result = this.runState(initState);
-            return result.value;
-        },
-        get : function(){
-            return state<S, S>(function<S>(state: S){
-                return { value: state, state: state}
-            })
-        },
-        put : function<P>(newState: P){
-            return state<undefined, P>(function<S>(state: S){
-              return {value: undefined as undefined, state: newState}
-            })
-        },
-        modify : function<P>(f: (v: S)=> P){
-            return this.get().chain(function(state: S){
-                const newState = f(state);
-                return this.put(newState)
-            })
-        },
-        gets : function<P>(f: (state: S)=> P){
-            return this.get().chain(function(st: S){
-                const valFromState = f(st);
-                return state<P, S>(function(state: S){
-                    return {value: valFromState, state: state}
-                })
-            })
-        }
-    }
-}
- */
-//generatorStore - local..
-//storeFactory
-//store
-//get
-//put
-//modify
-//gets
 exports.default = state;
+
+
+/***/ }),
+
+/***/ "./src/monad/Writer.ts":
+/*!*****************************!*\
+  !*** ./src/monad/Writer.ts ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var writerGen = function (v, log) {
+    return {
+        value: v,
+        log: log,
+        map: function (f) {
+            return writerGen(f(v), this.log);
+        },
+        flatten: function () {
+            console.log(this.value);
+            return writerGen(this.value.value, this.value.log);
+        },
+        chain: function (f) {
+            var res = this.map(f).flatten();
+            console.log(res);
+            return writerGen(res.value, this.log.concat(res.log));
+        }
+    };
+};
+var writer = function (v, l) {
+    if (l) {
+        return writerGen(v, l);
+    }
+    else {
+        return writerGen(v, []);
+    }
+};
+exports.default = writer;
 
 
 /***/ }),
