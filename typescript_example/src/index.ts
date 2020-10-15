@@ -74,7 +74,14 @@ const afterRes =res.catch((d: string) => d)
 console.log(afterRes.constructor.name) // left
 
 console.log(monadologia.state)
-const s = monadologia.state<string>("100")
+const s = monadologia.state(3).chain((value: number)=> monadologia.state.gets((state: any)=> {
+    console.log("STATE : ", state)
+    return state + "hello"
+}))
+.evalValue("test")
+
+console.log(s);
+
 
 /**
 .map((v: string)=> 200) // S<200, 100>
@@ -90,4 +97,3 @@ const s = monadologia.state<string>("100")
 .gets((state: any[]) => "") // S<string, number>
 .evalValue(1) // string
  */
-console.log(s);

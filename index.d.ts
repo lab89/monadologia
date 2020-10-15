@@ -41,23 +41,15 @@ interface State<T, S>{
     flatten<P, Q>(): State<P, Q>; 
     chain<P, Q>(f: (value: T)=> State<P, Q>): State<P, Q>// M<M<Q, S>, S> -> M<Q, S>
     evalValue(state: any): T // M<S, T> -> T
-    evalState(state: any): S // M<T, S> -> S 
-    //get(): State<S, S>; // M<T, S> -> M<S, S>
-    //put<P>(state: P): State<undefined, P>; // M<T, S> -> M<undefined, P>
-    //modify<P>(f: (state: S)=>P): State<undefined, P> // M<T, S> -> (S -> P) -> M<undefined, P>
-    //gets<P>(f: (state: S)=> P): State<P, S> // M<T, S> -> (S -> P) -> M<P, S>    /
-}
-interface StateFactory2 {
-    <T, S>(f: <P>(state: P)=>{value: T, state: S}): State<T, S>;    
-    <T, S>(f: (state: S)=>{value: T, state: S}): State<T, S>;    
+    evalState(state: any): S // M<T, S> -> S     
 }
 
 interface StateFactory{
     <T>(v: T) : State<T, any>;
-    get(): State<any, any>;
-    put<P>(state: P): State<undefined, P>;
-    modify<P>(f: (state: any)=>P): State<undefined, P>
-    gets<P>(f: (state: any)=>P): State<P, any>
+    get(): State<any, any>; // M<T, S> -> M<Q, Q>
+    put<P>(state: P): State<undefined, P>; // M<T, S> -> M<undefined, P>
+    modify<P>(f: (state: any)=>P): State<undefined, P> // M<T, S> -> (S -> P) -> M<undefined, P>
+    gets<P>(f: (state: any)=>P): State<P, any> // M<T, S> -> (S -> P) -> M<P, S> 
 }
 
 interface Writer<T>{
@@ -82,6 +74,6 @@ export function pipe(...fns: Array<Function>): Function;
 export function go(init: any, ...fns: Array<Function>): any;
 export function curry(...fns: Array<Function>): Function;
 export function compose(...fns: Array<Function>): Function;
-export function maybe<T>(v: T): Maybe<T>;
+export const maybe : MaybeFactory;
 export const either: EitherFactory;
-export function state<T>(v: T) : State<T, any>;    
+export const state: StateFactory;    
