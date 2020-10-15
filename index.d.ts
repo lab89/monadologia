@@ -33,33 +33,50 @@ interface Task {
     map(f: Function): Task; //M a -> (a -> b) -> M b // b: (err, ok)=> a(err, ok(f)) // sync
     chain(f: Function): Task; // M a -> (a -> M b) -> M b // b : (err, ok) => a(err, b(err, ok)) // async    
 }
+
 //<value, state>
-type RUNSTATE<P, Q> = <S>(state: S)=> {value: P, state: Q}
 interface State<T, S>{
-    runState: <Q>(state: S)=> {value: T, state: Q}
-    
-    map<Q>(f: (value: T)=> Q): State<Q, ReturnType<RUNSTATE<T, S>>['state']>; // M <T, S> -> value -> Q -> M <Q, S>
-    
-    flatten(): 
-    State<T, ReturnType<RUNSTATE<T, ReturnType<RUNSTATE<T, S>>['state']>>['state']> 
-    
-    // M<M<Q, S>, S> -> M<Q, S>
-    
-    // chain<P, Q>(f: (value: T)=> State<P, Q>): 
-    // State<ReturnType<RUNSTATE<ReturnType<RUNSTATE<P, Q>>['value'], ReturnType<RUNSTATE<P, Q>>['state']>>['value'], 
-    // ReturnType<RUNSTATE<ReturnType<RUNSTATE<P, Q>>['value'], ReturnType<RUNSTATE<P, Q>>['state']>>['state']> ; 
-    // // M <T, S> -> value -> M<Q, S> -> M<Q, S>
-
-
-    // evalValue<T, S>(f: ()=> {value: T, state: S}): T // M<S, T> -> T
-    // evalState(state: any): // M<T, S> -> runState<P, Q> -> Q;    
-    // get<P, Q>(): State<P, Q>;
-    // put<undefined, P>(v: P): State<undefined, P>;
-    // modify<undefined, Q>(f: (v: S)=>{value: any, state: Q}): State<undefined, Q>
-    //gets(f: (v: S)=>): State<any, any>
+    runState: <P>(state: P)=> {value: T, state: S}    
+    map<Q>(f: (value: T)=> Q): State<Q, S>; // M <T, S> -> value -> Q -> M <Q, S>
+    flatten<P, Q>(): State<P, Q>; 
+    chain<P, Q>(f: (value: T)=> State<P, Q>): State<P, Q>// M<M<Q, S>, S> -> M<Q, S>
+    evalValue(state: any): T // M<S, T> -> T
+    evalState(state: any): S // M<T, S> -> S 
+    //get(): State<S, S>; // M<T, S> -> M<S, S>
+    //put<P>(state: P): State<undefined, P>; // M<T, S> -> M<undefined, P>
+    //modify<P>(f: (state: S)=>P): State<undefined, P> // M<T, S> -> (S -> P) -> M<undefined, P>
+    //gets<P>(f: (state: S)=> P): State<P, S> // M<T, S> -> (S -> P) -> M<P, S>    /
 }
-interface StateFactory {
-    <T, S>(f: <Q>(state: any)=>{value: T, state: Q}): State<T, S>;    
+interface StateFactory2 {
+    <T, S>(f: <P>(state: P)=>{value: T, state: S}): State<T, S>;    
+    <T, S>(f: (state: S)=>{value: T, state: S}): State<T, S>;    
+}
+
+interface StateFactory{
+    <T>(v: T) : State<T, any>;
+    get(): State<any, any>;
+    put<P>(state: P): State<undefined, P>;
+    modify<P>(f: (state: any)=>P): State<undefined, P>
+    gets<P>(f: (state: any)=>P): State<P, any>
+}
+
+interface Writer<T>{
+    value: T, // T
+    log: any[], // any[]
+    map<Q>(f: (value: T)=> Q): Writer<Q> // M<T, any[]> -> M<Q, any[]>
+    flatten<P>(): Writer<P> | P, // M<T, any[]> -> T  or M<M<P, any[]>, any[]> -> M<P, any[] + any[]>
+    chain<P>(f: (value: T)=> Writer<P>): Writer<P> // M<T, any[]> -> (T -> M<P, any[]>) -> M<P, any[] + any[]>
+}
+
+interface Reader<T>{
+    runReader: <P>(env: P)=> T;
+    map<Q>(f: (value: T)=> Q): Reader<Q>;
+    chain<P>(f: (value: T)=> Reader<P>): Reader<P>;    
+}
+
+interface ReaderFactory{
+    <T>(f: <P>(v: P)=> T): Reader<T>
+    ask<T>(): Reader<T>;
 }
 export function pipe(...fns: Array<Function>): Function;
 export function go(init: any, ...fns: Array<Function>): any;
@@ -67,4 +84,4 @@ export function curry(...fns: Array<Function>): Function;
 export function compose(...fns: Array<Function>): Function;
 export function maybe<T>(v: T): Maybe<T>;
 export const either: EitherFactory;
-export function state<T, S>(f: (state: any)=>{value: T, state: S}): State<T, S>;    
+export function state<T>(v: T) : State<T, any>;    

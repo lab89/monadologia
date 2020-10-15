@@ -55,6 +55,7 @@ console.log(result2) // nothing
 
 
 
+
 function callback(v: string): string {
     if(v === "error") 
         throw new Error("error")
@@ -72,9 +73,21 @@ const afterRes =res.catch((d: string) => d)
 .chain((v: any) => testFunc("error").catch((m: string)=> m))
 console.log(afterRes.constructor.name) // left
 
+console.log(monadologia.state)
+const s = monadologia.state<string>("100")
 
-const s = monadologia.state<string, number>(function(state: any){
-    return {value: "", state: 100}
-}).map((v: string)=> 100)
+/**
+.map((v: string)=> 200) // S<200, 100>
+.chain((v: number)=>{
+    return monadologia.state<number, any[]>(function(state: any){
+        return {value: v+ 10, state : state}
+    })
+}) // S<210, []>
 
+.put(100) // S<undefined, 100>
+.get() // S<100, 100>
+.modify((v: number)=> []) // S<undefined, any[]>
+.gets((state: any[]) => "") // S<string, number>
+.evalValue(1) // string
+ */
 console.log(s);
