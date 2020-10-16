@@ -1,5 +1,5 @@
-import { Maybe, MaybeFactory } from "../../index";
-
+import {Either, Maybe, MaybeFactory } from "../../index";
+import either from "../monad/Either"
 const maybe: MaybeFactory = <MaybeFactory>function<T>(v: T): Maybe<T>{
     return{
         isNothing : function(){
@@ -11,7 +11,7 @@ const maybe: MaybeFactory = <MaybeFactory>function<T>(v: T): Maybe<T>{
         flatten : function(): T{
             return this.value;
         },
-        chain : function<S>(f: (v: T) => Maybe<S>): Maybe<S>{
+        chain : function<S>(f: (v: T) => Maybe<S>| Either<S>): Maybe<S>{
             return this.map(f).flatten();
         },
         value: v
@@ -33,6 +33,10 @@ maybe.nothing = function<T>(): Maybe<T>{
         },
         value: null
     }
+}
+
+maybe.maybeToEither = function<T>(v: Maybe<T>): Either<any>{
+    return v.isNothing()? either.left("no") : either.right(v.flatten())
 }
 
 export default maybe;

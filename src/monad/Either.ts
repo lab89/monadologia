@@ -1,4 +1,5 @@
-import { Either, EitherFactory } from "../..";
+import { Either, EitherFactory, Maybe } from "../..";
+import  maybe from "../monad/Maybe"
 function right<T>(v: T): Either<T> {
     return {
         constructor : right,
@@ -11,7 +12,7 @@ function right<T>(v: T): Either<T> {
         chain : function<S>(f: (v: T) => S){
             return this.map(f).flatten();
         },
-        catch : function<S>(f: (v: any) => S){
+        catch : function(f: (v: any) => any){
             return right<T>(this.value)
         },
         value : v
@@ -46,9 +47,14 @@ function tryCatch<T>(f: (v: any) => T): (v: any)=> Either<T>{
     }
 }
 
+function eitherToMaybe<T>(v: Either<T>): Maybe<any>{
+    return maybe(v.catch((e: any)=> null).flatten());
+}
+
 const either: EitherFactory = {
     right : right,
     left : left,
-    tryCatch : tryCatch
+    tryCatch : tryCatch,
+    eitherToMaybe: eitherToMaybe
 }
 export default either;
