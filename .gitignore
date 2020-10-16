@@ -1,1 +1,4 @@
 node_modules
+dist
+example
+static_example

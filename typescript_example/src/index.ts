@@ -81,6 +81,7 @@ console.log(afterRes) // either
 console.log(monadologia.state)
 const s = monadologia.state(3)
 .chain((v: number)=> monadologia.state.put([]))
+.chain((v: number)=> monadologia.state.get())
 .chain((value: number)=> monadologia.state.gets((state: any)=> {   
     console.log("STATE : " , state); 
     return state + "hello"
@@ -97,4 +98,13 @@ const w = monadologia.writer(4)
 .map((v: string)=> "Yaho@")
 .logging((v: string)=> "YAHO~~!")
 console.log(w)
+
+const t = monadologia.task<number>((err: Function, ok: Function)=>{
+    ok(1)
+}).chain((v: number)=> monadologia.task<string>((err: Function, ok: Function)=>{
+    ok("")
+})).map((v: string)=> 100)
+
+
+t.fork(console.error, console.log)
 

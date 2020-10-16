@@ -33,10 +33,16 @@ interface EitherFactory {
     eitherToMaybe<T>(v: Either<T>): Maybe<T>
 }
 
-interface Task {
-    fork: Function; 
-    map(f: Function): Task; //M a -> (a -> b) -> M b // b: (err, ok)=> a(err, ok(f)) // sync
-    chain(f: Function): Task; // M a -> (a -> M b) -> M b // b : (err, ok) => a(err, b(err, ok)) // async    
+interface Task <T>{
+    fork: (err: Function, ok: Function)=> void; 
+    map<S>(f: (v: T)=> S): Task<S>; //M a -> (a -> b) -> M b // b: (err, ok)=> a(err, ok(f)) // sync
+    chain<S>(f: (v: T)=> Task<S>): Task<S>; // M a -> (a -> M b) -> M b // b : (err, ok) => a(err, b(err, ok)) // async    
+    flatten<S>(): Task<S>;
+}
+
+interface TaskFactory {
+    <T>(f: (err: Function, ok: Function)=>void): Task<T>;
+    resolve<T>(value: T): Task<T>;
 }
 
 //<value, state>
@@ -89,3 +95,4 @@ export const maybe : MaybeFactory;
 export const either: EitherFactory;
 export const state: StateFactory;    
 export const writer: WriterFactory;
+export const task: TaskFactory;
