@@ -74,8 +74,9 @@ const afterRes =res.catch((d: string) => d)
 .map((v: string) => 10)
 .map((v: number) => "")
 .map((v: any) => testFunc("A").catch((m: string)=> m))
-.chain((v: monadologia.Either<string>)=> monadologia.either.eitherToMaybe(v))
-console.log(afterRes) // Maybe
+.map((v: monadologia.Either<string>)=> monadologia.either.eitherToMaybe(v))
+.chain((v: monadologia.Maybe<string>)=> monadologia.maybe.maybeToEither(v))
+console.log(afterRes) // either
 
 console.log(monadologia.state)
 const s = monadologia.state(3)
