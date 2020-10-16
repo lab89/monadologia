@@ -23,7 +23,6 @@ const config = {
     extensions: [".ts", ".js", ".json"]
   },
   plugins: [
-    new CleanWebpackPlugin(),
     new CopyPlugin({
         patterns: [
           { 
