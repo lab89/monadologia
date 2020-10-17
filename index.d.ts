@@ -42,7 +42,7 @@ interface Task <T>{
 
 interface TaskFactory {
     <T>(f: (err: Function, ok: Function)=>void): Task<T>;
-    resolve<T>(value: T): Task<T>;
+    force<T>(value: T): Task<T>;
 }
 
 //<value, state>

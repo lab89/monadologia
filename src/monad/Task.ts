@@ -15,7 +15,7 @@ const task: TaskFactory = <TaskFactory>function<T>(f: (err: Function, ok: Functi
     }
 }
 
-task.resolve = function(x: any){
+task.force = function(x: any){
     return task((_, ok)=> ok(x))
 }
 
