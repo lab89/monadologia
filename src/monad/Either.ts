@@ -15,7 +15,10 @@ function right<T>(v: T): Either<T> {
         catch : function(f: (v: any) => any){
             return right<T>(this.value)
         },
-        value : v
+        value : v,
+        eitherToMaybe : function(){
+            return maybe(this.catch((e: any)=> null as any).flatten());
+        }
     }
 }
 function left<T>(v: T): Either<T> {
@@ -33,7 +36,10 @@ function left<T>(v: T): Either<T> {
         catch : function<S>(f: (v: any) => S){
             return right<S>(f(this.value))
         },
-        value : v
+        value : v,
+        eitherToMaybe : function(){
+            return maybe(this.catch((e: any)=> null as any).flatten());
+        }
     }
 }
 
@@ -47,14 +53,10 @@ function tryCatch<T>(f: (v: any) => T): (v: any)=> Either<T>{
     }
 }
 
-function eitherToMaybe<T>(v: Either<T>): Maybe<any>{
-    return maybe(v.catch((e: any)=> null).flatten());
-}
 
 const either: EitherFactory = {
     right : right,
     left : left,
     tryCatch : tryCatch,
-    eitherToMaybe: eitherToMaybe
 }
 export default either;

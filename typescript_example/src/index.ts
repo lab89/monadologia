@@ -52,8 +52,8 @@ console.log(result2) // nothing
 
 
 
-const mb = monadologia.maybe(4)
-console.log(monadologia.maybe.maybeToEither(mb));
+const mb = monadologia.maybe(4).maybeToEither();
+console.log(mb);
 
 
 
@@ -74,20 +74,16 @@ const afterRes =res.catch((d: string) => d)
 .map((v: string) => 10)
 .map((v: number) => "")
 .map((v: any) => testFunc("A").catch((m: string)=> m))
-.map((v: monadologia.Either<string>)=> monadologia.either.eitherToMaybe(v))
-.chain((v: monadologia.Maybe<string>)=> monadologia.maybe.maybeToEither(v))
+.map((v: monadologia.Either<string>)=> v.eitherToMaybe())
+.chain((v: monadologia.Maybe<string>)=> v.maybeToEither())
 console.log(afterRes) // either
 
 console.log(monadologia.state)
-const s = monadologia.state(3)
-.chain((v: number)=> monadologia.state.put([]))
-.chain((v: number)=> monadologia.state.get())
-.chain((value: number)=> monadologia.state.gets((state: any)=> {   
-    console.log("STATE : " , state); 
-    return state + "hello"
-}))
-.evalValue("test")
-
+const s = monadologia.state<number, number>(3)
+.put("")
+.modify((state: string)=>{
+    return []
+}).evalState([])
 console.log(s);
 
 
@@ -107,4 +103,26 @@ const t = monadologia.task<number>((err: Function, ok: Function)=>{
 
 
 t.fork(console.error, console.log)
+
+const read = monadologia
+.reader<string, string>((v: string)=> {
+    console.log(v)
+    return "init"
+})
+.map((v: string)=>{
+    console.log(v)
+    return v + 200;
+})
+.map((v: string)=>{
+    console.log(v);
+    return v;
+})
+.ask()
+.map((v: string)=>{
+    console.log(v)
+    return v;
+})
+.runReader("test")
+
+
 

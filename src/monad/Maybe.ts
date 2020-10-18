@@ -14,7 +14,10 @@ const maybe: MaybeFactory = <MaybeFactory>function<T>(v: T): Maybe<T>{
         chain : function<S>(f: (v: T) => Maybe<S>| Either<S>): Maybe<S>{
             return this.map(f).flatten();
         },
-        value: v
+        value: v,
+        maybeToEither : function(){
+            return this.isNothing()? either.left("no") : either.right(this.flatten())
+        }
     }    
 }
 maybe.nothing = function<T>(): Maybe<T>{
@@ -31,12 +34,11 @@ maybe.nothing = function<T>(): Maybe<T>{
         chain : function<T>(){
             return maybe.nothing<T>();
         },
-        value: null
+        value: null,
+        maybeToEither : function(){
+            return this.isNothing()? either.left("no") : either.right(this.flatten())
+        }
     }
-}
-
-maybe.maybeToEither = function<T>(v: Maybe<T>): Either<any>{
-    return v.isNothing()? either.left("no") : either.right(v.flatten())
 }
 
 export default maybe;

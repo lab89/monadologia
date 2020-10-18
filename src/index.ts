@@ -7,4 +7,5 @@ import either from './monad/Either'
 import state from './monad/State'
 import writer from './monad/Writer'
 import task from './monad/Task'
-export default {pipe, curry, go, compose, maybe, either, state, writer, task}
+import reader from './monad/reader'
+export default {pipe, curry, go, compose, maybe, either, state, writer, task, reader}
