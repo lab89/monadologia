@@ -79,11 +79,30 @@ const afterRes =res.catch((d: string) => d)
 console.log(afterRes) // either
 
 console.log(monadologia.state)
-const s = monadologia.state<number, number>(3)
-.put("")
-.modify((state: string)=>{
-    return []
-}).evalState([])
+// const s = monadologia.state<number, number>(3)
+// .put((value: number)=> "hello")
+// .modify((state: string)=> [])
+// .evalState([])
+// .modify((state: string)=>{
+//     return []
+// }).chain((v: undefined)=>{
+//     return monadologia.state<number, number>(10)
+// })
+
+
+const s = monadologia.state<number>(3)
+.chain((value: number)=> monadologia.state.put(999))
+.chain((value: undefined)=> monadologia.state.get<number>())
+.chain((value: number)=> monadologia.state.modify((state: number)=>{
+    return [];
+}))
+.chain((value: undefined)=>{
+    return monadologia.state.gets((state: [])=> 200)
+})
+.chain((v: number)=> monadologia.state("호로리"))
+.evalValue(10)
+
+
 console.log(s);
 
 
@@ -104,24 +123,40 @@ const t = monadologia.task<number>((err: Function, ok: Function)=>{
 
 t.fork(console.error, console.log)
 
-const read = monadologia
-.reader<null, string>(null)
+const read = 
+monadologia.reader<number, string>(100)
 .map((v: number)=>{
+    console.log(v); // 100
     return v + 200;
 })
 .map((v: number)=>{
-    console.log(v);
-    return new String(v);
+    console.log(v) // 300
+    return v + 40;
 })
 .ask()
 .map((v: string)=>{
-    console.log(v)
+    console.log(v) // test
     return v;
 })
 .ask()
 .map((v: string)=> {
-    console.log(v);
-    return parseInt(v)
+    console.log(v); // test
+    return 10
+})
+.chain((value: number)=> {    
+    const newReader = monadologia.reader<number, string>(5).ask()
+    .map((v: string)=>{
+        console.log(v) // test
+        return v;
+    }).
+    map((v: string)=>{
+        return 1
+    })
+    return newReader;
+})
+.map((v: number)=> {
+    console.log(v); // 1
+    return v;
 })
 .runReader("test")
 

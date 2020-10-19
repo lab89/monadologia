@@ -39,7 +39,6 @@ interface Task <T>{
 
 interface TaskFactory {
     <T>(f: (err: Function, ok: Function)=>void): Task<T>;
-    force<T>(value: T): Task<T>;
 }
 
 //<value, state>
@@ -48,16 +47,21 @@ interface State<T, S>{
     map<Q>(f: (value: T)=> Q): State<Q, S>; // M <T, S> -> value -> Q -> M <Q, S>
     flatten<T, S>(): State<T, S>; 
     chain<P, Q>(f: (value: T)=> State<P, Q>): State<P, Q>// M<M<Q, S>, S> -> M<Q, S>
-    evalValue(state: S): T // M<S, T> -> T
-    evalState(state: S): S // M<T, S> -> S
-    get(): State<T, S>    
-    put<P>(state: P): State<undefined, P>
-    modify<P>(f: (state: S)=>P): State<undefined, P>
-    gets<P>(f: (state: S) => P): State<P, S> 
+    evalValue(state: any): any // M<S, T> -> T
+    evalState(state: any): any // M<T, S> -> S
+    // get(): State<T, S>    
+    // put<P>(f: (value: T) => P): State<undefined, P>
+    // modify<P>(f: (state: S)=>P): State<undefined, P>
+    // gets<P>(f: (state: S) => P): State<P, S> 
 }
 
 interface StateFactory{
     <T, S>(v: T) : State<T, S>;
+    <T>(v: T) : State<T, any>
+    get<T>(): State<T, T>
+    put<P>(newState: P): State<undefined, P>
+    modify<P>(f: (state: any)=>P): State<undefined, P>
+    gets<P>(f: (state: any) => P): State<P, any> 
 }
 
 interface Writer<T>{
@@ -73,8 +77,9 @@ interface WriterFactory{
     <T>(v: T) : Writer<T>
     <T>(v: T, l : any[]): Writer<T>
 }
+
 interface Reader<T, E>{    
-    runReader: (env: E)=> T;
+    runReader: (env?: E)=> T;
     map<Q>(f: (value: T)=> Q): Reader<Q, E>;
     chain<P>(f: (value: T)=> Reader<P, E>): Reader<P, E>;    
     ask(): Reader<E, E>;
