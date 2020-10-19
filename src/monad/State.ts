@@ -65,8 +65,8 @@ const stateGen = function<T, S>(f: (state: S)=> {value: T, state: S}): State<T, 
     }
 }
 
-const state: StateFactory = <StateFactory>function<T, S>(value : T): State<T, S>{
-    return stateGen<T, S>(function(state: S){
+const state: StateFactory = <StateFactory>function<T>(value : T): State<T, any>{
+    return stateGen<T, any>(function(state: any){
         return {value: value, state: state}
     })
 }
