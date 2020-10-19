@@ -105,22 +105,23 @@ const t = monadologia.task<number>((err: Function, ok: Function)=>{
 t.fork(console.error, console.log)
 
 const read = monadologia
-.reader<string, string>((v: string)=> {
-    console.log(v)
-    return "init"
-})
-.map((v: string)=>{
-    console.log(v)
+.reader<null, string>(null)
+.map((v: number)=>{
     return v + 200;
 })
-.map((v: string)=>{
+.map((v: number)=>{
     console.log(v);
-    return v;
+    return new String(v);
 })
 .ask()
 .map((v: string)=>{
     console.log(v)
     return v;
+})
+.ask()
+.map((v: string)=> {
+    console.log(v);
+    return parseInt(v)
 })
 .runReader("test")
 

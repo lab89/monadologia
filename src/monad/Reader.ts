@@ -15,8 +15,8 @@ const readerGen = function<T, E>(f: (env: E)=> T): Reader<T, E>{
     }
 }
 
-const reader: ReaderFactory = <ReaderFactory>function<T, E>(f: (v: E)=> T): Reader<T, E>{
-    return readerGen<T, E>(f)
+const reader: ReaderFactory = <ReaderFactory>function<T, E>(v: T): Reader<T, E>{
+    return readerGen<T, E>(() => v)
 }
 
 export default reader;

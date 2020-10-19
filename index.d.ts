@@ -80,7 +80,7 @@ interface Reader<T, E>{
     ask(): Reader<E, E>;
 }
 interface ReaderFactory{
-    <T, E>(f: (v: E)=> T): Reader<T, E>
+    <T, E>(v: T): Reader<T, E>
 }
 
 
