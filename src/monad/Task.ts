@@ -8,9 +8,6 @@ const task: TaskFactory = <TaskFactory>function<T>(f: (err: Function, ok: Functi
         },
         chain : function(f: Function){
             return task((err: Function, ok: Function) => this.fork(err, (x: any) => f(x).fork(err, ok)))
-        },
-        flatten : function<S>(){
-            return this.chain((x : Task<S>)=> x)
         }
     }
 }

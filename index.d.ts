@@ -34,7 +34,6 @@ interface Task <T>{
     fork: (err: Function, ok: Function)=> void; 
     map<S>(f: (v: T)=> S): Task<S>; //M a -> (a -> b) -> M b // b: (err, ok)=> a(err, ok(f)) // sync
     chain<S>(f: (v: T)=> Task<S>): Task<S>; // M a -> (a -> M b) -> M b // b : (err, ok) => a(err, b(err, ok)) // async    
-    flatten<S>(): Task<S>;
 }
 
 interface TaskFactory {
@@ -49,11 +48,12 @@ interface State<T, S>{
     chain<P, Q>(f: (value: T)=> State<P, Q>): State<P, Q>// M<M<Q, S>, S> -> M<Q, S>
     evalValue(state: any): any // M<S, T> -> T
     evalState(state: any): any // M<T, S> -> S
-    // get(): State<T, S>    
-    // put<P>(f: (value: T) => P): State<undefined, P>
-    // modify<P>(f: (state: S)=>P): State<undefined, P>
-    // gets<P>(f: (state: S) => P): State<P, S> 
 }
+
+// get(): State<T, S>    
+// put<P>(f: (value: T) => P): State<undefined, P>
+// modify<P>(f: (state: S)=>P): State<undefined, P>
+// gets<P>(f: (state: S) => P): State<P, S> 
 
 interface StateFactory{
     <T, S>(v: T) : State<T, S>;

@@ -73,9 +73,9 @@ console.log(res.constructor.name) // right
 const afterRes =res.catch((d: string) => d)
 .map((v: string) => 10)
 .map((v: number) => "")
-.map((v: any) => testFunc("A").catch((m: string)=> m))
-.map((v: monadologia.Either<string>)=> v.eitherToMaybe())
-.chain((v: monadologia.Maybe<string>)=> v.maybeToEither())
+.chain((v: any) => testFunc("A").catch((m: string)=> m))
+.eitherToMaybe()
+.maybeToEither()
 console.log(afterRes) // either
 
 console.log(monadologia.state)
@@ -91,20 +91,34 @@ console.log(monadologia.state)
 
 
 const s = monadologia.state<number>(3)
-.chain((value: number)=> monadologia.state.put(999))
-.chain((value: undefined)=> monadologia.state.get<number>())
+.chain((value: number)=> monadologia.state.put(999)) // value undefined state 999
+.chain((value: undefined)=> monadologia.state.get<number>()) // value 999 state 999
 .chain((value: number)=> monadologia.state.modify((state: number)=>{
     return [];
-}))
+})) // value undefined state []
 .chain((value: undefined)=>{
     return monadologia.state.gets((state: [])=> 200)
-})
-.chain((v: number)=> monadologia.state("호로리"))
-.evalValue(10)
+}) // value 200 state []
+.chain((v: number)=> monadologia.state("뿅")) // value 뽕 state[] 
+.evalValue(10) // init state 10, value return
 
 
 console.log(s);
 
+const s1 = monadologia.state<number>(3)
+.chain((value: number)=> monadologia.state.put(999)) // value undefined state 999
+.chain((value: undefined)=> monadologia.state.get<number>()) // value 999 state 999
+.chain((value: number)=> monadologia.state.modify((state: number)=>{
+    return [];
+})) // value undefined state []
+.chain((value: undefined)=>{
+    return monadologia.state.gets((state: [])=> 200)
+}) // value 200 state []
+.chain((v: number)=> monadologia.state("뿅")) // value 뽕 state[] 
+.evalState(10) // init state 10, state return
+
+
+console.log(s1);
 
 const w = monadologia.writer(4)
 .map((v: number)=> "hello!")
@@ -123,8 +137,7 @@ const t = monadologia.task<number>((err: Function, ok: Function)=>{
 
 t.fork(console.error, console.log)
 
-const read = 
-monadologia.reader<number, string>(100)
+const read1 = monadologia.reader<number, string>(100)
 .map((v: number)=>{
     console.log(v); // 100
     return v + 200;
@@ -133,17 +146,8 @@ monadologia.reader<number, string>(100)
     console.log(v) // 300
     return v + 40;
 })
-.ask()
-.map((v: string)=>{
-    console.log(v) // test
-    return v;
-})
-.ask()
-.map((v: string)=> {
-    console.log(v); // test
-    return 10
-})
-.chain((value: number)=> {    
+
+read1.chain((value: number)=>{
     const newReader = monadologia.reader<number, string>(5).ask()
     .map((v: string)=>{
         console.log(v) // test
@@ -153,12 +157,7 @@ monadologia.reader<number, string>(100)
         return 1
     })
     return newReader;
-})
-.map((v: number)=> {
-    console.log(v); // 1
-    return v;
-})
-.runReader("test")
+}).runReader("test")
 
 
 
