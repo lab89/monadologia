@@ -11,7 +11,7 @@ interface Maybe<T> {
     flatten(): T | Maybe<T>; // M a -> a 
     chain<S>(f: (v: T) => Maybe<S> | Either<S>): Maybe<S>; // M a -> (a -> M b) -> M b
     value: T;
-    maybeToEither(): Either<T>
+    maybeToEither(): Either<T> // M<T> -> S<T>
 }
 interface Either<T> {
     constructor<T>(v: T): Either<T>
@@ -21,7 +21,7 @@ interface Either<T> {
     value: T;
     catch<S>(f: (v: any) => S): Either<S>
     catch(f: (v: any) => any): Either<T>
-    eitherToMaybe<T>(): Maybe<T>
+    eitherToMaybe<T>(): Maybe<T>// M<T> -> S<T>
 }
 
 interface EitherFactory {
@@ -44,16 +44,11 @@ interface TaskFactory {
 interface State<T, S>{
     runState: (state: S)=> {value: T, state: S}    
     map<Q>(f: (value: T)=> Q): State<Q, S>; // M <T, S> -> value -> Q -> M <Q, S>
-    flatten<T, S>(): State<T, S>; 
+    flatten<P, Q>(): State<P, Q>; // M < M<P, S>, S> => M<P, S>
     chain<P, Q>(f: (value: T)=> State<P, Q>): State<P, Q>// M<M<Q, S>, S> -> M<Q, S>
-    evalValue(state: any): any // M<S, T> -> T
-    evalState(state: any): any // M<T, S> -> S
+    evalValue(state: any): any
+    evalState(state: any): any
 }
-
-// get(): State<T, S>    
-// put<P>(f: (value: T) => P): State<undefined, P>
-// modify<P>(f: (state: S)=>P): State<undefined, P>
-// gets<P>(f: (state: S) => P): State<P, S> 
 
 interface StateFactory{
     <T, S>(v: T) : State<T, S>;
@@ -80,9 +75,9 @@ interface WriterFactory{
 
 interface Reader<T, E>{    
     runReader: (env?: E)=> T;
-    map<Q>(f: (value: T)=> Q): Reader<Q, E>;
-    chain<P>(f: (value: T)=> Reader<P, E>): Reader<P, E>;    
-    ask(): Reader<E, E>;
+    map<Q>(f: (value: T)=> Q): Reader<Q, E>; // M<T, E> -> (T -> Q) -> M<Q, E>
+    chain<P>(f: (value: T)=> Reader<P, E>): Reader<P, E>;// M<T, E> -> (T -> M<P, E>) -> M<P, E>
+    ask(): Reader<E, E>; // M<E, E>
 }
 interface ReaderFactory{
     <T, E>(v: T): Reader<T, E>
