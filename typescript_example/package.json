@@ -29,6 +29,6 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "monadologia": "file:.."
+    "monadologia": "^1.1.0"
   }
 }
