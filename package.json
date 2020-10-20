@@ -1,14 +1,14 @@
 {
   "name": "monadologia",
-  "version": "1.1.1",
-  "description": "a monad helper library",
+  "version": "1.1.2",
+  "description": "A monad helper library",
   "main": "dist/monadologia.js",
   "types": "index.d.ts",
   "keywords": [
     "javascript",
     "fp",
     "functional programming",
-    "monad"    
+    "monad"
   ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
