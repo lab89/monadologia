@@ -151,4 +151,4 @@ interface Task <T>{
 }
 ```
 
-# check detail usecase on example project
+check detail usecase on example project!
