@@ -1,6 +1,6 @@
 dist
 example
 static_example
-node_modules
+# node_modules
 
-typescript_example/node_modules
+# typescript_example/node_modules
