@@ -1,6 +1,6 @@
 {
   "name": "monadologia",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "A monad helper library",
   "main": "dist/monadologia.js",
   "types": "index.d.ts",
