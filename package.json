@@ -1,6 +1,6 @@
 {
   "name": "monadologia",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A monad helper library",
   "main": "dist/monadologia.js",
   "types": "index.d.ts",
@@ -10,13 +10,24 @@
     "functional programming",
     "monad"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lab89/monadologia.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack -w",
     "start": "webpack-dev-server --open"
   },
-  "author": "cfop",
-  "license": "ISC",
+  "author": {
+    "name": "cfop",
+    "url": "ttps://github.com/lab89"
+  },
+  "bugs": {
+    "url": "https://github.com/lab89/monadologia/issues"
+  },
+  "homepage": "https://github.com/lab89/monadologia#readme",
+  "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",
